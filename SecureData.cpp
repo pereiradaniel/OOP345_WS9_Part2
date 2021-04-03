@@ -68,7 +68,17 @@ namespace w9 {
 		//         to encrypt/decrypt the text.
 		converter(text, key, nbytes, Cryptor());
 
+		auto convert = std::bind(converter, text, key, nbytes, Cryptor());
 
+		std::thread t1(convert);
+		std::thread t2(convert);
+		std::thread t3(convert);
+		std::thread t4(convert);
+
+		t1.join();
+		t2.join();
+		t3.join();
+		t4.join();
 
 		encoded = !encoded;
 	}
@@ -81,22 +91,24 @@ namespace w9 {
 		else
 		{
 			// TODO: open a binary file for writing
-
+			std::ofstream fout(file, std::ofstream::binary);
 
 			// TODO: write data into the binary file
 			//         and close the file
+			fout.write(text, nbytes);
+			fout.close();
 		}
 	}
 
 	void SecureData::restore(const char* file, char key) {
 		// TODO: open binary file for reading
-
+		std::ifstream fin(file, std::ifstream::binary);
 
 		// TODO: - allocate memory here for the file content
-
+		char* temp = new char[nbytes];
 
 		// TODO: - read the content of the binary file
-
+		fin.read(temp, nbytes);
 
 		*ofs << "\n" << nbytes << " bytes copied from binary file "
 			<< file << " into memory.\n";
